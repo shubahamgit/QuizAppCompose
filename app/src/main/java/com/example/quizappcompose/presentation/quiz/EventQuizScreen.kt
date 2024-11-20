@@ -9,4 +9,8 @@ sealed class EventQuizScreen {
         val type: String
     ): EventQuizScreen()
 
+    data class SetOptionSelected(
+        val quizStateIndex: Int,
+        val selectedOption: Int,
+    ): EventQuizScreen()
 }

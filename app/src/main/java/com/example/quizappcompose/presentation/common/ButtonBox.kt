@@ -45,7 +45,7 @@ fun ButtonBox(
             .padding(padding)
             .border(Dimens.SmallBorderWidth, borderColor, RoundedCornerShape(Dimens.LargeCornerRadius))
             .clickable { onClick() }
-            .fillMaxWidth()
+            .fillMaxWidth(fraction)
             .height(Dimens.MediumBoxHeight)
             .clip(RoundedCornerShape(Dimens.LargeCornerRadius))
             .background(containerColor),
@@ -53,8 +53,9 @@ fun ButtonBox(
     ) {
         Text(
             text = text,
-            fontSize = Dimens.MediumTextSize,
-            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold)
+            fontSize = fontSize,
+            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+            color = textColor
         )
 
     }

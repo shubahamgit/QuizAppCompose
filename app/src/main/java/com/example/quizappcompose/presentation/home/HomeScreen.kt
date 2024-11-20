@@ -45,7 +45,7 @@ fun  HomeScreen(
 
         Spacer(modifier = Modifier.height(Dimens.MediumSpacerHeight))
 
-        ButtonBox(text = "Generate Quiz", padding = Dimens.SmallPadding){
+        ButtonBox(text = "Generate Quiz", padding = Dimens.MediumPadding){
             navController.navigate(
                 Routes.QuizScreen.passQuizParams(
                     numOfQuizzes = state.numberOfQuiz,

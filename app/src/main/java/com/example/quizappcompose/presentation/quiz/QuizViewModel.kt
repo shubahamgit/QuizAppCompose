@@ -4,11 +4,13 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizappcompose.common.Resource
+import com.example.quizappcompose.domain.model.Quiz
 import com.example.quizappcompose.domain.usecases.GetQuizzesUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlin.text.replace
 
 @HiltViewModel
 class QuizViewModel @Inject constructor(
@@ -29,8 +31,48 @@ class QuizViewModel @Inject constructor(
                     type = event.type
                 )
             }
+            is EventQuizScreen.SetOptionSelected -> {
+                updateQuizStateList(
+                    event.quizStateIndex,
+                    event.selectedOption
+                )
+            }
 
             else -> {}
+        }
+    }
+
+    private fun updateQuizStateList(quizStateIndex: Int, selectedOption: Int) {
+        val updateQuizStateList = mutableListOf<QuizState>()
+         quizList.value.quizState.forEachIndexed { index, quizState ->
+             updateQuizStateList.add(
+                 if (quizStateIndex == index) {
+                     quizState.copy(selectedOptions = selectedOption)
+                 } else {
+                     quizState
+                 }
+             )
+         }
+
+        _quizList.value = quizList.value.copy(quizState = updateQuizStateList)
+
+        updateScore(_quizList.value.quizState[quizStateIndex])
+
+    }
+
+    private fun updateScore(quizState: QuizState) {
+        if(quizState.selectedOptions != -1) {
+            val correctAnswer = quizState.quiz?.correct_answer
+            val selectedAnswer = quizState.selectedOptions?.let {
+                quizState.shuffledOptions[it].replace("&quot;", "\"").replace("&#039;", "\'")
+            }
+
+            Log.d("check", "$correctAnswer --> $selectedAnswer")
+
+            if(correctAnswer == selectedAnswer) {
+                val prevScore = _quizList.value.score
+                _quizList.value = _quizList.value.copy(score = prevScore + 1)
+            }
         }
     }
 
@@ -57,12 +99,9 @@ class QuizViewModel @Inject constructor(
                     }
 
                     is Resource.Success -> {
-                        Log.d("quiz", "Success")
-                        for(quiz in resource.data!!) {
-                            Log.d("quiz", quiz.toString())
-                        }
+                        val listOfQuizState : List<QuizState> = getListOfQuizState(resource.data!!)
                         _quizList.value = StateQuizScreen(
-                            data = resource.data
+                            quizState = listOfQuizState
                         )
                     }
 
@@ -71,9 +110,7 @@ class QuizViewModel @Inject constructor(
                         _quizList.value = StateQuizScreen(
                             error = resource.message.toString()
                         )
-
                     }
-
                     else -> {}
                 }
 
@@ -84,5 +121,22 @@ class QuizViewModel @Inject constructor(
 
     }
 
+}
 
+
+fun getListOfQuizState(data: List<Quiz>): List<QuizState> {
+    val listOfQuizState = mutableListOf<QuizState>()
+
+    for(quiz in data) {
+        val shuffledQuestions = mutableListOf<String>().apply {
+            add(quiz.correct_answer)
+            addAll(quiz.incorrect_answers)
+            shuffle()
+        }
+
+        listOfQuizState.add(QuizState(quiz, shuffledQuestions , -1))
+
+    }
+
+    return listOfQuizState
 }

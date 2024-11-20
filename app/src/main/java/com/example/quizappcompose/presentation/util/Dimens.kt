@@ -4,6 +4,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 object Dimens {
+    val LargeLottieAnimSize = 150.dp
 
     val MediumBoxHeight = 60.dp
     val SmallBoxHeight = 40.dp

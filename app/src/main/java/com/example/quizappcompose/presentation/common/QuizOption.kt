@@ -52,7 +52,7 @@ fun QuizOptionPreview() {
     QuizOption(
         optionNumber = "A",
         options = "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-        selected = true,
+        selected = false,
         onOptionClick = {},
         onUnselectOption = {}
     )
