@@ -1,7 +1,7 @@
 package com.example.quizappcompose.presentation.quiz
 
-
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,7 +36,6 @@ import com.example.quizappcompose.presentation.util.Constants
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.example.quizappcompose.presentation.nav_graph.Routes
 import kotlinx.coroutines.launch
@@ -50,7 +49,8 @@ fun PrevQuiz() {
         difficulty = "Easy",
         type = "Multiple Choice",
         event = {},
-        state = StateQuizScreen()
+        state = StateQuizScreen(),
+        navController = rememberNavController()
         )
 }
 
@@ -62,8 +62,15 @@ fun QuizScreen(
     type: String,
     event: (EventQuizScreen) -> Unit,
     state: StateQuizScreen,
-//    navController: NavController = rememberNavController()
+    navController: NavController
 ) {
+    BackHandler {
+        navController.navigate(Routes.HomeScreen.route){
+            popUpTo(Routes.HomeScreen.route) {
+                inclusive = true
+            }
+        }
+    }
     LaunchedEffect(key1 = Unit) {
         val difficulty = when(difficulty) {
             "Medium" -> "medium"
@@ -81,10 +88,13 @@ fun QuizScreen(
     Column(modifier = Modifier.fillMaxSize()) {
         QuizAppBar(
             quizCategory = category,
-            onBackClick = {
-//             navController.navigate(route = Routes.HomeScreen.route)
+        ){
+            navController.navigate(Routes.HomeScreen.route){
+                popUpTo(Routes.HomeScreen.route) {
+                    inclusive = true
+                }
             }
-        )
+        }
 
         Column(
             modifier = Modifier
@@ -199,7 +209,7 @@ fun QuizScreen(
 
                     ) {
                         if(pagerState.currentPage == state.quizState.size - 1) {
-                            // TODO: Feature is not implemented
+                            navController.navigate(Routes.ScoreScreen.passNumOfQuestionsAndCorrectAns(state.quizState.size, state.score))
                             Log.d("score" , state.score.toString())
 
                         }

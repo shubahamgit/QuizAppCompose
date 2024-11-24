@@ -13,6 +13,7 @@ import com.example.quizappcompose.presentation.quiz.QuizScreen
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import com.example.quizappcompose.presentation.quiz.QuizViewModel
+import com.example.quizappcompose.presentation.score.ScoreScreen
 
 @Composable
 fun SetNavGraph(navController: NavHostController) {
@@ -54,6 +55,23 @@ fun SetNavGraph(navController: NavHostController) {
                 type = type,
                 event = viewModel::onEvent,
                 state = state,
+                navController = navController
+            )
+        }
+
+        composable(
+            route = Routes.ScoreScreen.route,
+            arguments = listOf(
+                navArgument(NOQ_KEY){ type = NavType.IntType },
+                navArgument(CORRECT_ANSWERS_KEY){ type = NavType.IntType }
+            )
+        ) {backStackEntry ->
+            val numOfQuestions = backStackEntry.arguments?.getInt(NOQ_KEY)
+            val correctAnswers = backStackEntry.arguments?.getInt(CORRECT_ANSWERS_KEY)
+            ScoreScreen(
+                numOfQuestions = numOfQuestions!!,
+                numOfCorrectAnswers = correctAnswers!!,
+                navController = navController
             )
         }
 

@@ -1,5 +1,6 @@
 package com.example.quizappcompose.presentation.score
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -39,7 +38,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.airbnb.lottie.compose.LottieAnimation
+import com.example.quizappcompose.presentation.nav_graph.Routes
 import java.text.DecimalFormat
 
 @Preview
@@ -47,7 +49,8 @@ import java.text.DecimalFormat
 fun ScoreScreenPreview() {
     ScoreScreen(
         numOfQuestions = 16,
-        numOfCorrectAnswers = 3
+        numOfCorrectAnswers = 3,
+        navController = rememberNavController()
     )
 }
 
@@ -55,7 +58,11 @@ fun ScoreScreenPreview() {
 fun ScoreScreen(
     numOfQuestions: Int,
     numOfCorrectAnswers: Int,
+    navController: NavController
 ) {
+    BackHandler {
+        goToHome(navController = navController)
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -68,7 +75,7 @@ fun ScoreScreen(
         ) {
             IconButton(
                 onClick = {
-                    // TODO: go to home screen
+                   goToHome(navController = navController)
                 }
             ) {
                 Icon(
@@ -193,7 +200,7 @@ fun ScoreScreen(
                     Icon(
                         modifier = Modifier.size(30.dp),
                         painter = painterResource(id = R.drawable.facebook),
-                        contentDescription = "instagram",
+                        contentDescription = "facebook",
                     )
 
                     Spacer(modifier = Modifier.width(Dimens.SmallSpacerWidth))
@@ -201,11 +208,18 @@ fun ScoreScreen(
                     Icon(
                         modifier = Modifier.size(30.dp),
                         painter = painterResource(id = R.drawable.twitter),
-                        contentDescription = "instagram",
+                        contentDescription = "twitter",
                     )
                 }
-
             }
+        }
+    }
+}
+
+fun goToHome(navController: NavController) {
+    navController.navigate(Routes.HomeScreen.route) {
+        popUpTo(Routes.HomeScreen.route){
+            inclusive = true
         }
     }
 }
